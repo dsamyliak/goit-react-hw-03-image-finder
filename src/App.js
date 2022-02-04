@@ -1,15 +1,16 @@
-import logo from "./logo.svg";
+import React from "react";
+// import logo from "./logo.svg";
 import "./App.css";
-import "./components/styles.css";
+// import { Audio } from 'react-loader-spinner';
+// import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import Loader from "./components/Loader";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  state = {};
+
+  render() {
+    return <Loader />;
+  }
 }
 
 export default App;
