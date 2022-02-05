@@ -5,8 +5,8 @@ import { TailSpin } from "react-loader-spinner";
 const Loader = () => (
   <div className="loaderItem">
     <TailSpin
-      heigth="100"
-      width="80"
+      heigth="50"
+      width="40"
       color="#f06819"
       ariaLabel="loading"
     ></TailSpin>
