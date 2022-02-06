@@ -1,8 +1,8 @@
-.loaderItem {
+.LoaderItem {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 20px;
-  color: #f06819;
+  color: #2c8fe0;
   visibility: visible;
 }
