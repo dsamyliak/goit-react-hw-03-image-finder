@@ -2,6 +2,7 @@ import React from "react";
 import "./Searchbar.css";
 import { nanoid } from "nanoid";
 import propTypes from "prop-types";
+import { toast } from "react-toastify";
 
 class Searchbar extends React.Component {
   searchQueryId = nanoid();
@@ -16,10 +17,14 @@ class Searchbar extends React.Component {
   };
 
   handleSubmit = (e) => {
-    console.log(this.state);
-
     e.preventDefault();
-    this.props.onSubmit(this.state.searchQuery);
+
+    if (this.state.searchQuery.trim() === "") {
+      toast.error("Enter name of image!");
+      return;
+    }
+
+    this.props.onSubmit(this.state.searchQuery.trim().toLowerCase());
     this.reset();
   };
 
@@ -42,9 +47,9 @@ class Searchbar extends React.Component {
               type="text"
               autoComplete="off"
               autoFocus
-              pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-              title="Name may contain only letters, apostrophe, dash and spaces. For example Cat, Architecture"
-              required
+              //   pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+              //   title="Name may contain only letters, apostrophe, dash and spaces. For example Cat, Architecture"
+              //   required
               id={this.searchQueryId}
               name="searchQuery"
               value={this.state.searchQuery}

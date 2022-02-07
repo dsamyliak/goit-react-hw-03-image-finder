@@ -2,10 +2,10 @@ import React from "react";
 import "./Loader.css";
 import { TailSpin } from "react-loader-spinner";
 
-const Loader = ({ loaderShow: value }) => (
+const Loader = ({ loading }) => (
   <div className="LoaderItem">
     <TailSpin
-      visible={value}
+      visible={loading}
       heigth="60"
       width="50"
       color="#2c8fe0"
