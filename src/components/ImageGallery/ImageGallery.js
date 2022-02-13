@@ -1,12 +1,8 @@
 import React from "react";
 import "./ImageGallery.css";
-import ImageGalleryItem from "../ImageGalleryItem";
-import Button from "../Button";
-import Loader from "../Loader";
 import { nanoid } from "nanoid";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
-const axios = require("axios");
 
 const ImageGallery = ({ children }) => {
   return (
