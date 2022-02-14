@@ -17,9 +17,10 @@ export default class App extends React.Component {
   state = {
     imageData: [],
     page: 1,
+    error: null,
     // id: "",
     // webformatURL: "",
-    // largeImageURL: "",
+    largeImageURL: "",
   };
 
   formSubmitHandler = (searchQuery) => {
@@ -30,20 +31,24 @@ export default class App extends React.Component {
       this.reset();
     }
 
-    this.setState({ searchQuery: searchQuery, page: 1, imageData: [] });
+    this.setState({
+      searchQuery: searchQuery,
+      page: 1,
+      imageData: [],
+      error: null,
+      openModal: false,
+    });
   };
 
   fetchArray = () => {
     const { searchQuery, page } = this.state;
 
+    this.setState({ loading: true });
+
     fetch(
       `https://pixabay.com/api/?q=${searchQuery}&page=${page}&key=3705719-850a353db1ffe60c326d386e6&image_type=photo&orientation=horizontal&per_page=12`
     )
       .then((response) => {
-        {
-          this.setState({ loading: true });
-        }
-
         if (response.ok) {
           console.log("response.json()", response);
           return response.json();
@@ -67,15 +72,29 @@ export default class App extends React.Component {
       })
       .finally(() => {
         this.lastImagesInDB();
-        setTimeout(() => {
-          this.setState({ loading: false });
-        }, 300);
+
+        this.setState({ loading: false });
       });
   };
 
-  loadMoreImages = (searchQuery, page) => {
+  loadMoreImages = () => {
     this.fetchArray();
     console.log("---BUTTON+1 - this.state.page", this.state.page);
+  };
+
+  openModal = (e) => {
+    this.setState({ openModal: !this.state.openModal });
+
+    console.log("e.currentTarget", e.currentTarget);
+    const altImg = e.currentTarget.getAttribute("alt");
+    const largeImg = e.currentTarget.getAttribute("imagelargelink");
+
+    // const { alt, imagelargelink } = e.currentTarget;
+
+    console.log("e.alt", altImg);
+    console.log("e.imagelargelink", largeImg);
+
+    this.setState({ largeImageURL: largeImg, alt: altImg });
   };
 
   lastImagesInDB = () => {
@@ -105,6 +124,7 @@ export default class App extends React.Component {
       imageData: [],
       page: 1,
       searchQuery: "",
+      error: null,
       // id: "",
       // webformatURL: "",
       // largeImageURL: "",
@@ -122,6 +142,7 @@ export default class App extends React.Component {
           <ImageGallery>
             <ImageGalleryItem
               imageData={this.state.imageData}
+              openModal={this.openModal}
             ></ImageGalleryItem>
           </ImageGallery>
         )}
@@ -132,11 +153,16 @@ export default class App extends React.Component {
           <Button onClick={this.loadMoreImages} />
         )}
 
-        {this.state.page && (
+        {/* {this.state.page && (
           <p style={{ textAlign: "center" }}>{this.state.page}</p>
-        )}
+        )} */}
 
-        {/* <Modal /> */}
+        {this.state.openModal && (
+          <Modal
+            largeimageurl={this.state.largeImageURL}
+            altimage={this.state.alt}
+          />
+        )}
 
         <ToastContainer autoClose={3000} theme={"light"} />
       </div>

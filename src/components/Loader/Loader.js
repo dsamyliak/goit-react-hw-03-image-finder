@@ -6,8 +6,8 @@ const Loader = ({ loading }) => (
   <div className="LoaderItem">
     <TailSpin
       visible={loading}
-      heigth="60"
-      width="50"
+      heigth="80"
+      width="70"
       color="#2c8fe0"
       ariaLabel="loading"
     ></TailSpin>
