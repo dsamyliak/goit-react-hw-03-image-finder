@@ -1,8 +1,6 @@
 import React from "react";
 import "./ImageGallery.css";
-import { nanoid } from "nanoid";
-import PropTypes from "prop-types";
-import { toast } from "react-toastify";
+import propTypes from "prop-types";
 
 const ImageGallery = ({ children }) => {
   return (
@@ -13,3 +11,7 @@ const ImageGallery = ({ children }) => {
 };
 
 export default ImageGallery;
+
+ImageGallery.propTypes = {
+  children: propTypes.element,
+};

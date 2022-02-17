@@ -1,16 +1,21 @@
 import React from "react";
 import "./Loader.css";
-import { TailSpin } from "react-loader-spinner";
+import { Watch } from "react-loader-spinner";
+import propTypes from "prop-types";
 
 const Loader = ({ loading }) => (
   <div className="LoaderItem">
-    <TailSpin
+    <Watch
       visible={loading}
-      heigth="80"
-      width="70"
-      color="#2c8fe0"
+      heigth="100"
+      width="80"
+      color="white"
       ariaLabel="loading"
-    ></TailSpin>
+    ></Watch>
   </div>
 );
 export default Loader;
+
+Loader.propTypes = {
+  loading: propTypes.bool,
+};

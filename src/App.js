@@ -1,9 +1,6 @@
 import React from "react";
 import "./App.css";
-import { nanoid } from "nanoid";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import propTypes from "prop-types";
+
 import Loader from "./components/Loader";
 import Searchbar from "./components/Searchbar";
 import ImageGallery from "./components/ImageGallery";
@@ -11,23 +8,65 @@ import ImageGalleryItem from "./components/ImageGalleryItem/ImageGalleryItem";
 import Button from "./components/Button/Button";
 import Modal from "./components/Modal/Modal";
 // const axios = require("axios");
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
+import propTypes from "prop-types";
 
 export default class App extends React.Component {
   state = {
+    searchQuery: "",
     imageData: [],
     page: 1,
     error: null,
-    // id: "",
-    // webformatURL: "",
+    id: "",
+    webformatURL: "",
     largeImageURL: "",
+    showModal: false,
   };
+
+  componentDidMount() {
+    console.log("App DidMount");
+
+    window.addEventListener("keydown", this.handleAltSpaceDown);
+  }
+
+  componentWillUnmount() {
+    console.log("App WillUnMount");
+    window.removeEventListener("keydown", this.handleAltSpaceDown);
+  }
+
+  handleAltSpaceDown = (e) => {
+    console.log("keydown e.code ", e.code);
+
+    if (this.state.searchQuery !== "") {
+      if (e.altKey && e.code === "Space") {
+        console.log("MetaLeft pressed");
+        this.loadMoreImages();
+      }
+    }
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log("COMPONENT DIDUPDATE");
+
+    const oldQuery = prevState.searchQuery;
+    const newQuery = this.state.searchQuery;
+
+    if (oldQuery !== newQuery) {
+      console.clear();
+      this.fetchArray();
+    }
+  }
 
   formSubmitHandler = (searchQuery) => {
     console.log("formSubmitHandler");
 
     if (this.state.searchQuery === searchQuery) {
-      toast.error("You enter the same word!!! Enter new one!!!");
+      toast.error("You enter the same word!!! Enter new one!!!", {
+        theme: "colored",
+        position: "top-center",
+      });
       this.reset();
     }
 
@@ -36,7 +75,7 @@ export default class App extends React.Component {
       page: 1,
       imageData: [],
       error: null,
-      openModal: false,
+      showModal: false,
     });
   };
 
@@ -50,7 +89,7 @@ export default class App extends React.Component {
     )
       .then((response) => {
         if (response.ok) {
-          console.log("response.json()", response);
+          // console.log("response.json()", response);
           return response.json();
         }
 
@@ -68,7 +107,10 @@ export default class App extends React.Component {
       })
       .catch((error) => {
         this.setState({ error });
-        toast.error(`${error}`);
+        toast.error(`${error}`, {
+          theme: "colored",
+          position: "top-center",
+        });
       })
       .finally(() => {
         this.lastImagesInDB();
@@ -79,45 +121,41 @@ export default class App extends React.Component {
 
   loadMoreImages = () => {
     this.fetchArray();
-    console.log("---BUTTON+1 - this.state.page", this.state.page);
+    console.log("BUTTON+1 ", this.state.page);
   };
 
-  openModal = (e) => {
-    this.setState({ openModal: !this.state.openModal });
+  toggleModal = (e) => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+  };
 
-    console.log("e.currentTarget", e.currentTarget);
+  imgInfo = (e) => {
+    // console.log("e.currentTarget", e.currentTarget);
+    // console.log("e.target", e.target);
+
     const altImg = e.currentTarget.getAttribute("alt");
-    const largeImg = e.currentTarget.getAttribute("imagelargelink");
+    const largeImg = e.currentTarget.getAttribute("largeimageurl");
 
-    // const { alt, imagelargelink } = e.currentTarget;
-
-    console.log("e.alt", altImg);
-    console.log("e.imagelargelink", largeImg);
-
-    this.setState({ largeImageURL: largeImg, alt: altImg });
+    this.setState({
+      largeImageURL: largeImg,
+      alt: altImg,
+    });
   };
 
   lastImagesInDB = () => {
     const arrL = this.state.arrayLength;
 
-    console.log("this.lastImagesInDB");
     if (arrL !== 12) {
-      toast.warning("No more images in DataBase!!!");
+      toast.info("No more images in DataBase!!!", {
+        theme: "colored",
+        icon: "🚀",
+        position: "top-center",
+      });
+      console.log("this.lastImagesInDB");
       return;
     }
   };
-
-  componentDidUpdate(prevProps, prevState) {
-    console.log("COMPONENT DIDUPDATE");
-
-    const oldQuery = prevState.searchQuery;
-    const newQuery = this.state.searchQuery;
-
-    if (oldQuery !== newQuery) {
-      console.clear();
-      this.fetchArray();
-    }
-  }
 
   reset = () => {
     this.setState({
@@ -133,39 +171,54 @@ export default class App extends React.Component {
 
   render() {
     console.log("App this.state", this.state);
+    const { showModal, largeImageURL, alt, imageData, loading, arrayLength } =
+      this.state;
 
     return (
       <div className="App">
+        {showModal && (
+          <Modal showModal={this.toggleModal}>
+            <img src={largeImageURL} alt={alt} />
+          </Modal>
+        )}
+
         <Searchbar onSubmit={this.formSubmitHandler} />
 
-        {this.state.imageData && (
+        {imageData && (
           <ImageGallery>
             <ImageGalleryItem
-              imageData={this.state.imageData}
-              openModal={this.openModal}
+              imageData={imageData}
+              showModal={this.toggleModal}
+              imgInfo={this.imgInfo}
             ></ImageGalleryItem>
           </ImageGallery>
         )}
 
-        {this.state.loading && <Loader loading={this.state.loading} />}
+        {loading && <Loader loading={loading} />}
 
-        {this.state.imageData && this.state.arrayLength === 12 && (
+        {imageData && arrayLength === 12 && (
           <Button onClick={this.loadMoreImages} />
         )}
 
-        {/* {this.state.page && (
-          <p style={{ textAlign: "center" }}>{this.state.page}</p>
-        )} */}
-
-        {this.state.openModal && (
-          <Modal
-            largeimageurl={this.state.largeImageURL}
-            altimage={this.state.alt}
-          />
-        )}
-
-        <ToastContainer autoClose={3000} theme={"light"} />
+        <ToastContainer
+          autoClose={3000}
+          theme="colored"
+          position="top-center"
+          icon="🚀"
+        />
       </div>
     );
   }
 }
+
+App.propTypes = {
+  state: propTypes.shape({
+    searchQuery: propTypes.string,
+    imageData: propTypes.array,
+    error: propTypes.bool,
+    id: propTypes.string,
+    webformatURL: propTypes.string,
+    largeImageURL: propTypes.string,
+    showModal: propTypes.bool,
+  }),
+};

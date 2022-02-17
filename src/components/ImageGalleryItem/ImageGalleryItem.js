@@ -1,17 +1,24 @@
 import React from "react";
 import "./ImageGalleryItem.css";
+import { nanoid } from "nanoid";
+import propTypes from "prop-types";
 
-const ImageGalleryItem = ({ imageData, openModal }) => {
+const ImageGalleryItem = ({ imageData, showModal, imgInfo }) => {
   return (
     <>
-      {imageData.map(({ webformatURL, id, tags, largeImageURL }) => (
-        <li className="ImageGalleryItem" key={id}>
+      {imageData.map(({ webformatURL, tags, largeImageURL }) => (
+        <li
+          className="ImageGalleryItem"
+          key={nanoid()}
+          id={nanoid()}
+          onClick={showModal}
+        >
           <img
             src={webformatURL}
             alt={tags}
-            imagelargelink={largeImageURL}
+            largeimageurl={largeImageURL}
             className="ImageGalleryItem-image"
-            onClick={openModal}
+            onClick={imgInfo}
           />
         </li>
       ))}
@@ -20,3 +27,9 @@ const ImageGalleryItem = ({ imageData, openModal }) => {
 };
 
 export default ImageGalleryItem;
+
+ImageGalleryItem.propTypes = {
+  imageData: propTypes.array,
+  showModal: propTypes.func,
+  imgInfo: propTypes.func,
+};
