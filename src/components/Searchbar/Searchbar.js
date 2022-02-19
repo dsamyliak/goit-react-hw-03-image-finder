@@ -7,6 +7,12 @@ import { toast } from "react-toastify";
 class Searchbar extends React.Component {
   searchQueryId = nanoid();
 
+  static propTypes = {
+    state: propTypes.shape({
+      searchQuery: propTypes.string.isRequired,
+    }),
+  };
+
   state = {
     searchQuery: "",
   };
@@ -62,11 +68,5 @@ class Searchbar extends React.Component {
     );
   }
 }
-
-Searchbar.propTypes = {
-  state: propTypes.shape({
-    searchQuery: propTypes.string.isRequired,
-  }),
-};
 
 export default Searchbar;
